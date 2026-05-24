@@ -1,11 +1,5 @@
 [build]
-  base = "frontend"
   publish = "frontend"
-  command = "sed -i 's|VITE_API_URL_PLACEHOLDER|'\"$API_BASE_URL\"'|g' index.html"
-
-[build.environment]
-  # Set API_BASE_URL in Netlify Dashboard → Site Settings → Environment Variables
-  # Example: https://your-app-name.onrender.com
 
 [[headers]]
   for = "/*"
