@@ -1,0 +1,26 @@
+# Environment variables (keep your API keys safe!)
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Database (optional - remove if you want to include it)
+backend/adaptive_irrigation.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp

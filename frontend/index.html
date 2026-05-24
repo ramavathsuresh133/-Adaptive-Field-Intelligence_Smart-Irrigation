@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive Field Intelligence — Sensor-Free Smart Irrigation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-icon">🌾</div>
+        <div class="brand-text">
+          <h1 class="header-title">Adaptive Field Intelligence</h1>
+          <p class="header-subtitle">Sensor-Free Smart Irrigation — ML Powered</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="city-control">
+          <input type="text" id="city-input" placeholder="Enter city" value="Hyderabad" />
+          <select id="language-select" class="language-select">
+            <option value="en">English (EN)</option>
+            <option value="hi">हिन्दी (HI)</option>
+            <option value="te">తెలుగు (TE)</option>
+            <option value="ta">தமிழ் (TA)</option>
+            <option value="kn">ಕನ್ನಡ (KN)</option>
+            <option value="mr">मराठी (MR)</option>
+            <option value="bn">বাংলা (BN)</option>
+            <option value="gu">ગુજરાતી (GU)</option>
+            <option value="pa">ਪੰਜਾਬੀ (PA)</option>
+            <option value="ml">മലയാളം (ML)</option>
+            <option value="or">ଓଡ଼ିଆ (OR)</option>
+          </select>
+          <button id="refresh-btn" class="btn-primary">↻ Refresh Data</button>
+        </div>
+        <div class="status-badge">
+          <span class="badge-dot"></span>
+          <span>Sensor-Free Mode</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Processing Intelligence...</p>
+    </div>
+
+    <!-- SUMMARY -->
+    <section class="summary-strip">
+      <article class="metric-card" id="card-soil-moisture">
+        <div class="metric-icon">💧</div>
+        <div class="metric-label" data-i18n="avg_sm">Avg Soil Moisture</div>
+        <div class="metric-value skeleton" id="avg-soil-moisture">—</div>
+        <div class="metric-unit" data-i18n="score_100">Score / 100</div>
+      </article>
+      <article class="metric-card" id="card-urgency">
+        <div class="metric-icon">⚠️</div>
+        <div class="metric-label" data-i18n="urgency">Overall Urgency</div>
+        <div class="metric-value skeleton" id="overall-urgency">—</div>
+        <div class="metric-unit" data-i18n="highest_level">Highest level</div>
+      </article>
+      <article class="metric-card" id="card-drip-health">
+        <div class="metric-icon">🔧</div>
+        <div class="metric-label" data-i18n="drip">Avg Drip Health</div>
+        <div class="metric-value skeleton" id="avg-drip-health">—</div>
+        <div class="metric-unit" data-i18n="score_100">Score / 100</div>
+      </article>
+      <article class="metric-card" id="card-repositions">
+        <div class="metric-icon">📍</div>
+        <div class="metric-label" data-i18n="repo">Pending Repositions</div>
+        <div class="metric-value skeleton" id="pending-repositions">—</div>
+        <div class="metric-unit" data-i18n="zones_action">Zones needing action</div>
+      </article>
+    </section>
+
+    <!-- ZONE STATUS -->
+    <section class="zone-section">
+      <h2 class="section-title"><span>🗺️</span> <span data-i18n="irr_status">Irrigation Zone Status</span></h2>
+      <div class="zone-grid" id="zone-grid">
+        <article class="zone-card" id="zone-north">
+          <div class="zone-header"><div class="zone-name">North Zone</div><span class="urgency-badge" id="urgency-north">—</span></div>
+          <div class="zone-body">
+            <div class="zone-metric-row"><span class="zone-metric-label">Soil Moisture</span><span class="zone-metric-value" id="sm-north">—</span></div>
+            <div class="progress-track"><div class="progress-fill" id="progress-north"></div></div>
+            <div class="zone-metric-row"><span class="zone-metric-label">Drip Health</span><span class="zone-metric-value" id="drip-north">—</span></div>
+            <div class="progress-track health-track"><div class="progress-fill health-fill" id="health-north"></div></div>
+            <div class="fault-text" id="fault-north"></div>
+            <div class="weather-strip">
+              <span class="weather-chip" id="temp-north">🌡️ —°C</span>
+              <span class="weather-chip" id="hum-north">💦 —%</span>
+              <span class="weather-chip" id="desc-north">🌤️ —</span>
+            </div>
+          </div>
+        </article>
+        <article class="zone-card" id="zone-south">
+          <div class="zone-header"><div class="zone-name">South Zone</div><span class="urgency-badge" id="urgency-south">—</span></div>
+          <div class="zone-body">
+            <div class="zone-metric-row"><span class="zone-metric-label">Soil Moisture</span><span class="zone-metric-value" id="sm-south">—</span></div>
+            <div class="progress-track"><div class="progress-fill" id="progress-south"></div></div>
+            <div class="zone-metric-row"><span class="zone-metric-label">Drip Health</span><span class="zone-metric-value" id="drip-south">—</span></div>
+            <div class="progress-track health-track"><div class="progress-fill health-fill" id="health-south"></div></div>
+            <div class="fault-text" id="fault-south"></div>
+            <div class="weather-strip">
+              <span class="weather-chip" id="temp-south">🌡️ —°C</span>
+              <span class="weather-chip" id="hum-south">💦 —%</span>
+              <span class="weather-chip" id="desc-south">🌤️ —</span>
+            </div>
+          </div>
+        </article>
+        <article class="zone-card" id="zone-east">
+          <div class="zone-header"><div class="zone-name">East Zone</div><span class="urgency-badge" id="urgency-east">—</span></div>
+          <div class="zone-body">
+            <div class="zone-metric-row"><span class="zone-metric-label">Soil Moisture</span><span class="zone-metric-value" id="sm-east">—</span></div>
+            <div class="progress-track"><div class="progress-fill" id="progress-east"></div></div>
+            <div class="zone-metric-row"><span class="zone-metric-label">Drip Health</span><span class="zone-metric-value" id="drip-east">—</span></div>
+            <div class="progress-track health-track"><div class="progress-fill health-fill" id="health-east"></div></div>
+            <div class="fault-text" id="fault-east"></div>
+            <div class="weather-strip">
+              <span class="weather-chip" id="temp-east">🌡️ —°C</span>
+              <span class="weather-chip" id="hum-east">💦 —%</span>
+              <span class="weather-chip" id="desc-east">🌤️ —</span>
+            </div>
+          </div>
+        </article>
+        <article class="zone-card" id="zone-west">
+          <div class="zone-header"><div class="zone-name">West Zone</div><span class="urgency-badge" id="urgency-west">—</span></div>
+          <div class="zone-body">
+            <div class="zone-metric-row"><span class="zone-metric-label">Soil Moisture</span><span class="zone-metric-value" id="sm-west">—</span></div>
+            <div class="progress-track"><div class="progress-fill" id="progress-west"></div></div>
+            <div class="zone-metric-row"><span class="zone-metric-label">Drip Health</span><span class="zone-metric-value" id="drip-west">—</span></div>
+            <div class="progress-track health-track"><div class="progress-fill health-fill" id="health-west"></div></div>
+            <div class="fault-text" id="fault-west"></div>
+            <div class="weather-strip">
+              <span class="weather-chip" id="temp-west">🌡️ —°C</span>
+              <span class="weather-chip" id="hum-west">💦 —%</span>
+              <span class="weather-chip" id="desc-west">🌤️ —</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ALERTS -->
+    <section class="alert-section">
+      <div class="section-header">
+        <h2 class="section-title"><span>🔔</span> <span data-i18n="alerts_title">Live Intelligence Alerts</span></h2>
+        <span class="alert-count-badge" id="alert-count">0 alerts</span>
+      </div>
+      <div class="alert-panel" id="alert-list">
+        <div class="alert-empty">All systems nominal</div>
+      </div>
+    </section>
+
+    <!-- FEATURE 4: HISTORY CHART -->
+    <section class="charts-section">
+      <div class="chart-card wide-chart">
+        <div class="chart-card-header">
+          <h3 class="chart-title"><span>📈</span> 7-Day Soil Moisture Trend</h3>
+          <span class="chart-subtitle">Zone-wise historical comparison</span>
+        </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="soil-chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE 1: FORECAST SECTION -->
+    <section class="forecast-section">
+      <h2 class="section-title"><span>📅</span> <span data-i18n="forecast_title">5-Day Forecast & Irrigation Outlook</span></h2>
+      <div class="forecast-row" id="forecast-row">
+        <!-- Cards injected by JS -->
+      </div>
+    </section>
+
+    <!-- FEATURE 2: CROP PLANNER -->
+    <section class="crop-section">
+      <h2 class="section-title"><span>🌾</span> <span data-i18n="planner_title">Crop-Specific Irrigation Planner</span></h2>
+      <div class="planner-card">
+        <div class="planner-form">
+          <div class="input-group">
+            <label data-i18n="target_crop">Target Crop</label>
+            <select id="crop-select">
+              <option value="Rice">Rice</option>
+              <option value="Wheat">Wheat</option>
+              <option value="Maize">Maize</option>
+              <option value="Sugarcane">Sugarcane</option>
+              <option value="Cotton">Cotton</option>
+              <option value="Vegetables">Vegetables</option>
+            </select>
+          </div>
+          <button id="get-recommendation-btn" class="btn-primary" data-i18n="analyze_needs">Analyze Needs</button>
+        </div>
+        <div id="crop-result" class="crop-result-card hidden">
+          <div class="crop-result-main">
+            <div class="gauge-container" id="soil-gauge"></div>
+            <div class="rec-details">
+              <h4 id="rec-crop-name">Rice</h4>
+              <p id="rec-text"></p>
+              <div class="rec-metrics">
+                <div class="rec-metric"><span data-i18n="optimal">Optimal</span>: <b id="rec-optimal">—</b>%</div>
+                <div class="rec-metric"><span data-i18n="water">Water</span>: <b id="rec-water">—</b> L/m²</div>
+              </div>
+            </div>
+            <div id="irrigate-badge" class="irrigate-badge"></div>
+            <button id="tts-btn" class="tts-btn" title="Listen to recommendation">🔊</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE 5: WATER SAVINGS -->
+    <section class="savings-section">
+      <h2 class="section-title"><span>💰</span> <span data-i18n="savings_title">Water & Cost Savings Calculator</span></h2>
+      <div class="savings-grid">
+        <div class="savings-inputs">
+          <input type="number" id="area-input" value="1.0" step="0.1" placeholder="Area (Hectares)" />
+          <button id="calculate-savings-btn" class="btn-primary">Calculate Savings</button>
+        </div>
+        <div class="savings-results">
+          <div class="savings-card">
+            <div class="metric-label" data-i18n="savings_pct">Savings Percentage</div>
+            <div class="savings-pct" id="savings-pct">0%</div>
+          </div>
+          <div class="metric-strip">
+            <div class="savings-mini"><span data-i18n="traditional">Traditional</span>: <b id="trad-water">—</b> L</div>
+            <div class="savings-mini"><span data-i18n="smart">Smart</span>: <b id="smart-water">—</b> L</div>
+            <div class="savings-mini"><span data-i18n="cost_saved">Cost Saved</span>: <b id="cost-saved">₹0</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPOSITION TABLE & EXPORTS -->
+    <section class="reposition-section">
+      <h2 class="section-title"><span>🚜</span> <span data-i18n="reposition_title">Equipment Repositioning Schedule</span></h2>
+      <div class="table-wrapper">
+        <table class="reposition-table" id="reposition-table">
+          <thead>
+            <tr>
+              <th data-i18n="col_zone">Zone</th>
+              <th data-i18n="col_stage">Stage</th>
+              <th data-i18n="col_priority">Priority</th>
+              <th data-i18n="col_labor">Labor</th>
+              <th data-i18n="col_date">Date</th>
+              <th data-i18n="col_status">Status</th>
+            </tr>
+          </thead>
+          <tbody id="reposition-tbody"></tbody>
+        </table>
+      </div>
+      <!-- FEATURE 6: EXPORT TOOLBAR -->
+      <div class="export-toolbar">
+        <button onclick="exportData('field_readings')" class="export-btn"><span>▼</span> Zone Data (CSV)</button>
+        <button onclick="exportData('drip_health')" class="export-btn"><span>▼</span> Drip Data (CSV)</button>
+        <button onclick="downloadReport()" class="export-btn report-btn"><span>▼</span> Full Report (TXT)</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      Adaptive Field Intelligence © 2026 · No Physical Sensors Used
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
