@@ -5,7 +5,8 @@
 
 'use strict';
 
-const BASE_URL = 'http://localhost:8000';
+// API Base URL: set window.ENV_API_URL in index.html for production, defaults to localhost for dev
+const BASE_URL = window.ENV_API_URL || 'http://localhost:8000';
 
 let soilChart = null;
 
